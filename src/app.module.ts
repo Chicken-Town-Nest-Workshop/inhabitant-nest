@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { InhabitantModule } from './inhabitant/inhabitant.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -35,6 +36,7 @@ import * as Joi from 'joi';
       },
       inject: [ConfigService],
     }),
+    InhabitantModule,
   ],
   controllers: [AppController],
   providers: [AppService],
