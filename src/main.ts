@@ -1,14 +1,18 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'; //swagger
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // const { httpAdapter } = app.get(HttpAdapterHost);
+  // app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+
   const config = new DocumentBuilder()
-    .setTitle('temp API')
-    .setDescription('Nest template API description')
+    .setTitle('Inhabitant API')
+    .setDescription('Inhabitant API description')
     .setVersion('1.0')
-    .addTag('template')
+    .addTag('Inhabitant')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
