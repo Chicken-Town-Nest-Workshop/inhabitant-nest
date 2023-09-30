@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
-import { InhabitantDto, UpdateInhabitantDto } from './dtos';
+import { CreateInhabitantDto, InhabitantDto, UpdateInhabitantDto } from './dtos';
 import { InhabitantServiceInterface } from './interfaces/inhabitant.service.interface';
 
 @Controller('inhabitant')
@@ -21,7 +21,7 @@ export class InhabitantController {
     }
 
     @Post(':name')
-    async create(@Body() data: UpdateInhabitantDto): Promise<Array<InhabitantDto>> {
+    async create(@Body() data: CreateInhabitantDto): Promise<Array<InhabitantDto>> {
         return await this.inhabitantService.createByName(data, '');
     }
 
