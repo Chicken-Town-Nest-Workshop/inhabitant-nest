@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InhabitantModule } from './inhabitant/inhabitant.module';
 import * as Joi from 'joi';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions.filter';
 
 @Module({
   imports: [
@@ -39,6 +41,11 @@ import * as Joi from 'joi';
     InhabitantModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    }
+  ],
 })
 export class AppModule { }

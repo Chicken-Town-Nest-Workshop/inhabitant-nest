@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { CreateInhabitantDto, InhabitantDto, UpdateInhabitantDto } from './dtos';
 import { InhabitantServiceInterface } from './interfaces/inhabitant.service.interface';
 
@@ -7,11 +7,11 @@ export class InhabitantController {
 
     constructor(
         @Inject('InhabitantServiceInterface')
-        private inhabitantService: InhabitantServiceInterface) {
+        private inhabitantService: InhabitantServiceInterface) { }
 
-    }
     @Get()
     async getAllInhabitant(): Promise<Array<InhabitantDto>> {
+        throw new Error('你好你好');
         return await this.inhabitantService.getAll();
     }
 
