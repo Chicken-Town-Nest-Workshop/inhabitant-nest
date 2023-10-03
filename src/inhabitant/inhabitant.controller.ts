@@ -11,7 +11,6 @@ export class InhabitantController {
 
     @Get()
     async getAllInhabitant(): Promise<Array<InhabitantDto>> {
-        throw new Error('你好你好');
         return await this.inhabitantService.getAll();
     }
 

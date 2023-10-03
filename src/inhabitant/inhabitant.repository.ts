@@ -18,6 +18,4 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
     delete(id: string, updateId: string): Promise<InhabitantDto[]> {
         throw new Error("Method not implemented.");
     }
-
-
 }
