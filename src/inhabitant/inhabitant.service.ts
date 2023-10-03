@@ -26,7 +26,7 @@ export class InhabitantService implements InhabitantServiceInterface {
         return await this.inhabitantRepo.readById(id);
     }
 
-    async createByName(data: CreateInhabitantDto, createId: string): Promise<InhabitantDto[]> {
+    async createByName(data: CreateInhabitantDto, createId: string): Promise<InhabitantDto> {
 
         this.ErrorCheckService.checkOneValue(Constant.InhabitantName, data.name);
         this.ErrorCheckService.checkOneValue(Constant.UpdateId, createId);
@@ -34,7 +34,7 @@ export class InhabitantService implements InhabitantServiceInterface {
         return await this.inhabitantRepo.create(data, createId);
     }
 
-    async updateInhabitant(data: UpdateInhabitantDto, updateId: string): Promise<InhabitantDto[]> {
+    async updateInhabitant(data: UpdateInhabitantDto, updateId: string): Promise<InhabitantDto> {
 
         this.ErrorCheckService.checkOneValue(Constant.InhabitantId, data.id);
         this.ErrorCheckService.checkOneValue(Constant.InhabitantName, data.name);
@@ -43,7 +43,7 @@ export class InhabitantService implements InhabitantServiceInterface {
         return await this.inhabitantRepo.update(data, updateId);
     }
 
-    async deleteById(id: string, updateId: string): Promise<InhabitantDto[]> {
+    async deleteById(id: string, updateId: string): Promise<InhabitantDto> {
         this.ErrorCheckService.checkOneValue(Constant.InhabitantId, id);
         this.ErrorCheckService.checkOneValue(Constant.UpdateId, updateId);
 

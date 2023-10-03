@@ -19,7 +19,7 @@ export interface InhabitantRepositoryInterface {
      * @param name 新居民名稱
      * @param createId 建立者身分證
      */
-    create(data: CreateInhabitantDto, createId: string): Promise<Array<InhabitantDto>>;
+    create(data: CreateInhabitantDto, createId: string): Promise<InhabitantDto>;
 
     /**
      * 更新名稱
@@ -27,12 +27,12 @@ export interface InhabitantRepositoryInterface {
      * @param id 居民身分證
      * @param updateId 更新者身分證
      */
-    update(data: UpdateInhabitantDto, updateId: string): Promise<Array<InhabitantDto>>;
+    update(data: UpdateInhabitantDto, updateId: string): Promise<InhabitantDto>;
 
     /**
      * 驅除鎮民
      * @param id 居民身分證
      * @param updateId 更新者身分證
      */
-    delete(id: string, updateId: string): Promise<Array<InhabitantDto>>;
+    delete(id: string, updateId: string): Promise<InhabitantDto>;
 }

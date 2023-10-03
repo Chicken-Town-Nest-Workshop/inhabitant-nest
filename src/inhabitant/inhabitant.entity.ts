@@ -11,9 +11,6 @@ export class InhabitantEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'idCard', type: 'varchar', length: 128 })
-  idCard: string;
-
   @Column({ name: 'name', type: 'varchar', length: 20 })
   name: string;
 

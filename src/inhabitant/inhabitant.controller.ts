@@ -20,17 +20,17 @@ export class InhabitantController {
     }
 
     @Post(':name')
-    async create(@Body() data: CreateInhabitantDto): Promise<Array<InhabitantDto>> {
+    async create(@Body() data: CreateInhabitantDto): Promise<InhabitantDto> {
         return await this.inhabitantService.createByName(data, '');
     }
 
     @Put()
-    async update(@Body() updateInhabitantDto: UpdateInhabitantDto): Promise<Array<InhabitantDto>> {
+    async update(@Body() updateInhabitantDto: UpdateInhabitantDto): Promise<InhabitantDto> {
         return await this.inhabitantService.updateInhabitant(updateInhabitantDto, '');
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string) {
+    async remove(@Param('id') id: string): Promise<InhabitantDto> {
         return await this.inhabitantService.deleteById(id, '');
     }
 }
