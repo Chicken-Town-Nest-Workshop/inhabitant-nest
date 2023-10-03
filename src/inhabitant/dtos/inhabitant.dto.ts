@@ -8,7 +8,7 @@ export class InhabitantDto {
     name: string;
 
     @ApiProperty({ description: '居民的年齡' })
-    age: string;
+    age: number;
 
     @ApiProperty({ description: '職業的姓名' })
     occupation: string;

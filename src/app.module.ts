@@ -7,6 +7,7 @@ import { InhabitantModule } from './inhabitant/inhabitant.module';
 import * as Joi from 'joi';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions.filter';
+import { ErrorCheckModule } from './error-check/error-check.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AllExceptionsFilter } from './all-exceptions.filter';
       inject: [ConfigService],
     }),
     InhabitantModule,
+    ErrorCheckModule,
   ],
   controllers: [AppController],
   providers: [AppService,
