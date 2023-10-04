@@ -8,13 +8,15 @@ import { InhabitantRepository } from './inhabitant.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([InhabitantEntity])],
   controllers: [InhabitantController],
-  providers: [{
-    provide: 'InhabitantServiceInterface',
-    useClass: InhabitantService
-  },
-  {
-    provide: 'InhabitantRepositoryInterface',
-    useClass: InhabitantRepository
-  }],
+  providers: [
+    {
+      provide: 'InhabitantServiceInterface',
+      useClass: InhabitantService,
+    },
+    {
+      provide: 'InhabitantRepositoryInterface',
+      useClass: InhabitantRepository,
+    },
+  ],
 })
-export class InhabitantModule { }
+export class InhabitantModule {}
