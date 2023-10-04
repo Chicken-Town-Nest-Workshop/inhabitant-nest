@@ -86,16 +86,6 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
         data: UpdateInhabitantDto,
         updateId: string,
     ): Promise<InhabitantDto> {
-
-        const oldData = await this.inhabitantDao.findOne({
-            where: {
-                id: data.id,
-            },
-        });
-
-        oldData.name = data.name;
-        oldData.update_user_id = updateId;
-
         const queryBuilder = this.dataSource
             .getRepository(InhabitantEntity)
             .createQueryBuilder(this._tableName);
@@ -103,7 +93,11 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
         const id = data.id;
 
         const result = await queryBuilder
-            .update<InhabitantEntity>(InhabitantEntity, oldData)
+            .update(this._tableName)
+            .set({
+                name: data.name,
+                update_user_id: updateId,
+            })
             .where(this._tableName + '.id = :id', { id })
             .returning(this._schema)
             .updateEntity(true)
@@ -117,22 +111,18 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
             occupation: model.occupation,
         };
     }
+
     async delete(id: string, updateId: string): Promise<InhabitantDto> {
-        const oldData = await this.inhabitantDao.findOne({
-            where: {
-                id: id,
-            },
-        });
-
-        oldData.ban = true;
-        oldData.update_user_id = updateId;
-
         const queryBuilder = this.dataSource
             .getRepository(InhabitantEntity)
             .createQueryBuilder(this._tableName);
 
         const result = await queryBuilder
-            .update<InhabitantEntity>(InhabitantEntity, oldData)
+            .update(this._tableName)
+            .set({
+                ban: true,
+                update_user_id: updateId,
+            })
             .where(this._tableName + '.id = :id', { id })
             .returning(this._schema)
             .updateEntity(true)
