@@ -31,10 +31,10 @@ import { ErrorCheckModule } from './error-check/error-check.module';
             poolSize: 5,
             idleTimeoutMillis: 3600000,
           },
-          type: 'postgres',//連線資料庫的類型
+          type: 'postgres', //連線資料庫的類型
           url: configService.getOrThrow('DB_URI', ''),
-          synchronize: false,//否自動同步 entity 到資料庫 table
-          autoLoadEntity: true//是否自動載入 Entity 到 forRoot TypeORM
+          synchronize: false, //否自動同步 entity 到資料庫 table
+          autoLoadEntities: true, //是否自動載入 Entity 到 forRoot TypeORM,
         };
       },
       inject: [ConfigService],
@@ -43,11 +43,12 @@ import { ErrorCheckModule } from './error-check/error-check.module';
     ErrorCheckModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [
+    AppService,
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
-    }
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}
