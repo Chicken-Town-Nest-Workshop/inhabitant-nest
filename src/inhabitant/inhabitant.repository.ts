@@ -27,7 +27,7 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
     private readonly dataSource: DataSource,
     @InjectRepository(InhabitantEntity)
     private readonly inhabitantDao: Repository<InhabitantEntity>,
-  ) {}
+  ) { }
 
   async readAll(): Promise<InhabitantDto[]> {
     const result = await this.inhabitantDao.find();
@@ -55,20 +55,7 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
     };
   }
 
-  async create(
-    data: CreateInhabitantDto,
-    createId: string,
-  ): Promise<InhabitantDto> {
-    const newData = new InhabitantEntity();
-
-    newData.name = data.name;
-    newData.hungry = 5;
-    newData.occupation = '居民';
-    newData.age = 0;
-    newData.money = 0;
-    newData.ban = false;
-    newData.update_user_id = createId;
-
+  async create(data: InhabitantEntity): Promise<InhabitantDto> {
     const queryBuilder = this.dataSource
       .getRepository(InhabitantEntity)
       .createQueryBuilder(this._tableName);
@@ -76,7 +63,7 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
     const result = await queryBuilder
       .insert()
       .into(InhabitantEntity)
-      .values([newData])
+      .values([data])
       .returning(this._schema)
       .updateEntity(true)
       .execute();
@@ -98,15 +85,13 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
       .getRepository(InhabitantEntity)
       .createQueryBuilder(this._tableName);
 
-    const id = data.id;
-
     const result = await queryBuilder
       .update(this._tableName)
       .set({
         name: data.name,
         update_user_id: updateId,
       })
-      .where(this._tableName + '.id = :id', { id })
+      .where(this._tableName + '.id = :id', { updateId })
       .returning(this._schema)
       .updateEntity(true)
       .execute();

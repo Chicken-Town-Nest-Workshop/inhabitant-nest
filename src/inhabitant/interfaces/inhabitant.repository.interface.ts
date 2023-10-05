@@ -1,4 +1,5 @@
 import { CreateInhabitantDto, InhabitantDto, UpdateInhabitantDto } from "../dtos";
+import { InhabitantEntity } from "../inhabitant.entity";
 
 
 export interface InhabitantRepositoryInterface {
@@ -19,7 +20,7 @@ export interface InhabitantRepositoryInterface {
      * @param name 新居民名稱
      * @param createId 建立者身分證
      */
-    create(data: CreateInhabitantDto, createId: string): Promise<InhabitantDto>;
+    create(data: InhabitantEntity): Promise<InhabitantDto>;
 
     /**
      * 更新名稱

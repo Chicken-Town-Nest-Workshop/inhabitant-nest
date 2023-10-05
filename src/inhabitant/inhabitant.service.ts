@@ -8,6 +8,7 @@ import {
 } from './dtos';
 import { InhabitantRepositoryInterface } from './interfaces/inhabitant.repository.interface';
 import { ErrorCheckServiceInterface } from 'src/error-check/error-check.service.interface';
+import { InhabitantEntity } from './inhabitant.entity';
 
 @Injectable()
 export class InhabitantService implements InhabitantServiceInterface {
@@ -16,7 +17,7 @@ export class InhabitantService implements InhabitantServiceInterface {
     private inhabitantRepo: InhabitantRepositoryInterface,
     @Inject('ErrorCheckServiceInterface')
     private ErrorCheckService: ErrorCheckServiceInterface,
-  ) {}
+  ) { }
 
   async getAll(): Promise<InhabitantDto[]> {
     return await this.inhabitantRepo.readAll();
@@ -35,7 +36,17 @@ export class InhabitantService implements InhabitantServiceInterface {
     this.ErrorCheckService.checkOneValue(Constant.InhabitantName, data.name);
     this.ErrorCheckService.checkOneValue(Constant.UpdateId, createId);
 
-    return await this.inhabitantRepo.create(data, createId);
+    const newData = new InhabitantEntity();
+
+    newData.name = data.name;
+    newData.hungry = 5;
+    newData.occupation = '居民';
+    newData.age = 0;
+    newData.money = 0;
+    newData.ban = false;
+    newData.update_user_id = createId;
+
+    return await this.inhabitantRepo.create(newData);
   }
 
   async updateInhabitant(
