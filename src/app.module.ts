@@ -8,6 +8,7 @@ import * as Joi from 'joi';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { ErrorCheckModule } from './error-check/error-check.module';
+import { ClockModule } from './clock/clock.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ErrorCheckModule } from './error-check/error-check.module';
     }),
     InhabitantModule,
     ErrorCheckModule,
+    ClockModule
   ],
   controllers: [AppController],
   providers: [
@@ -51,4 +53,4 @@ import { ErrorCheckModule } from './error-check/error-check.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
