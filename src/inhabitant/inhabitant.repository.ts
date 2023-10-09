@@ -1,12 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   InhabitantDto,
-  CreateInhabitantDto,
   UpdateInhabitantDto,
 } from './dtos';
 import { InhabitantRepositoryInterface } from './interfaces/inhabitant.repository.interface';
 import { InhabitantEntity } from './inhabitant.entity';
 import { DataSource, Repository } from 'typeorm';
+import { Inject } from '@nestjs/common';
+import { ClockServiceInterface } from 'src/clock/clock.service.interface';
 
 export class InhabitantRepository implements InhabitantRepositoryInterface {
   private readonly _tableName: string = 'inhabitant';
@@ -27,6 +28,8 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
     private readonly dataSource: DataSource,
     @InjectRepository(InhabitantEntity)
     private readonly inhabitantDao: Repository<InhabitantEntity>,
+    @Inject('ClockServiceInterface')
+    private clockService: ClockServiceInterface,
   ) { }
 
   async readAll(): Promise<InhabitantDto[]> {
@@ -60,6 +63,11 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
       .getRepository(InhabitantEntity)
       .createQueryBuilder(this._tableName);
 
+    // 填寫時間
+    const d = new Date(this.clockService.getDateTime());
+    data.create_time = d;
+    data.update_time = d;
+
     const result = await queryBuilder
       .insert()
       .into(InhabitantEntity)
@@ -85,13 +93,18 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
       .getRepository(InhabitantEntity)
       .createQueryBuilder(this._tableName);
 
+    // 填寫時間
+    const d = new Date(this.clockService.getDateTime());
+    const inhabitantId = data.id;
+
     const result = await queryBuilder
       .update(this._tableName)
       .set({
         name: data.name,
         update_user_id: updateId,
+        update_time: d,
       })
-      .where(this._tableName + '.id = :id', { updateId })
+      .where(this._tableName + '.id = :id', { id: inhabitantId })
       .returning(this._schema)
       .updateEntity(true)
       .execute();
@@ -110,11 +123,15 @@ export class InhabitantRepository implements InhabitantRepositoryInterface {
       .getRepository(InhabitantEntity)
       .createQueryBuilder(this._tableName);
 
+    // 填寫時間
+    const d = new Date(this.clockService.getDateTime());
+
     const result = await queryBuilder
       .update(this._tableName)
       .set({
         ban: true,
         update_user_id: updateId,
+        update_time: d,
       })
       .where(this._tableName + '.id = :id', { id })
       .returning(this._schema)
