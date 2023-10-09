@@ -1,149 +1,149 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-    InhabitantDto,
-    CreateInhabitantDto,
-    UpdateInhabitantDto,
+  InhabitantDto,
+  UpdateInhabitantDto,
 } from './dtos';
 import { InhabitantRepositoryInterface } from './interfaces/inhabitant.repository.interface';
 import { InhabitantEntity } from './inhabitant.entity';
 import { DataSource, Repository } from 'typeorm';
+import { Inject } from '@nestjs/common';
+import { ClockServiceInterface } from 'src/clock/clock.service.interface';
 
 export class InhabitantRepository implements InhabitantRepositoryInterface {
-    private readonly _tableName: string = 'inhabitant';
-    private readonly _schema: string[] = [
-        'id', 'name', 'hungry', 'occupation', 'age', 'money', 'ban', 'create_time', 'update_time', 'update_user_id'
-    ]
+  private readonly _tableName: string = 'inhabitant';
+  private readonly _schema: string[] = [
+    'id',
+    'name',
+    'hungry',
+    'occupation',
+    'age',
+    'money',
+    'ban',
+    'create_time',
+    'update_time',
+    'update_user_id',
+  ];
 
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(InhabitantEntity)
+    private readonly inhabitantDao: Repository<InhabitantEntity>,
+    @Inject('ClockServiceInterface')
+    private clockService: ClockServiceInterface,
+  ) { }
 
-    constructor(
-        private readonly dataSource: DataSource,
-        @InjectRepository(InhabitantEntity)
-        private readonly inhabitantDao: Repository<InhabitantEntity>,
-    ) { }
+  async readAll(): Promise<InhabitantDto[]> {
+    const result = await this.inhabitantDao.find();
 
-    async readAll(): Promise<InhabitantDto[]> {
-        const result = await this.inhabitantDao.find();
+    return result.map((data) => ({
+      id: data.id,
+      name: data.name,
+      age: data.age,
+      occupation: data.occupation,
+    }));
+  }
 
-        return result.map((data) => ({
-            id: data.id,
-            name: data.name,
-            age: data.age,
-            occupation: data.occupation,
-        }));
-    }
+  async readById(id: string): Promise<InhabitantDto> {
+    const result = await this.inhabitantDao.findOne({
+      where: {
+        id: id,
+      },
+    });
 
-    async readById(id: string): Promise<InhabitantDto> {
-        const result = await this.inhabitantDao.findOne({
-            where: {
-                id: id,
-            },
-        });
+    return {
+      id: result.id,
+      name: result.name,
+      age: result.age,
+      occupation: result.occupation,
+    };
+  }
 
-        return {
-            id: result.id,
-            name: result.name,
-            age: result.age,
-            occupation: result.occupation,
-        };
-    }
+  async create(data: InhabitantEntity): Promise<InhabitantDto> {
+    const queryBuilder = this.dataSource
+      .getRepository(InhabitantEntity)
+      .createQueryBuilder(this._tableName);
 
-    async create(
-        data: CreateInhabitantDto,
-        createId: string,
-    ): Promise<InhabitantDto> {
-        const newData = new InhabitantEntity();
+    // 填寫時間
+    const d = new Date(this.clockService.getDateTime());
+    data.create_time = d;
+    data.update_time = d;
 
-        newData.name = data.name;
-        newData.hungry = 5;
-        newData.occupation = '居民';
-        newData.age = 0;
-        newData.money = 0;
-        newData.ban = false;
-        newData.update_user_id = createId;
+    const result = await queryBuilder
+      .insert()
+      .into(InhabitantEntity)
+      .values([data])
+      .returning(this._schema)
+      .updateEntity(true)
+      .execute();
 
-        const queryBuilder = this.dataSource
-            .getRepository(InhabitantEntity)
-            .createQueryBuilder(this._tableName);
+    const model = result.raw[0] as InhabitantEntity;
+    return {
+      id: model.id,
+      name: model.name,
+      age: model.age,
+      occupation: model.occupation,
+    };
+  }
 
-        const result = await queryBuilder
-            .insert()
-            .into(InhabitantEntity)
-            .values([newData])
-            .returning(this._schema)
-            .updateEntity(true)
-            .execute();
+  async update(
+    data: UpdateInhabitantDto,
+    updateId: string,
+  ): Promise<InhabitantDto> {
+    const queryBuilder = this.dataSource
+      .getRepository(InhabitantEntity)
+      .createQueryBuilder(this._tableName);
 
-        const model = result.raw[0] as InhabitantEntity;
-        return {
-            id: model.id,
-            name: model.name,
-            age: model.age,
-            occupation: model.occupation,
-        };
-    }
+    // 填寫時間
+    const d = new Date(this.clockService.getDateTime());
+    const inhabitantId = data.id;
 
-    async update(
-        data: UpdateInhabitantDto,
-        updateId: string,
-    ): Promise<InhabitantDto> {
+    const result = await queryBuilder
+      .update(this._tableName)
+      .set({
+        name: data.name,
+        update_user_id: updateId,
+        update_time: d,
+      })
+      .where(this._tableName + '.id = :id', { id: inhabitantId })
+      .returning(this._schema)
+      .updateEntity(true)
+      .execute();
 
-        const oldData = await this.inhabitantDao.findOne({
-            where: {
-                id: data.id,
-            },
-        });
+    const model = result.raw[0] as InhabitantEntity;
+    return {
+      id: model.id,
+      name: model.name,
+      age: model.age,
+      occupation: model.occupation,
+    };
+  }
 
-        oldData.name = data.name;
-        oldData.update_user_id = updateId;
+  async delete(id: string, updateId: string): Promise<InhabitantDto> {
+    const queryBuilder = this.dataSource
+      .getRepository(InhabitantEntity)
+      .createQueryBuilder(this._tableName);
 
-        const queryBuilder = this.dataSource
-            .getRepository(InhabitantEntity)
-            .createQueryBuilder(this._tableName);
+    // 填寫時間
+    const d = new Date(this.clockService.getDateTime());
 
-        const id = data.id;
+    const result = await queryBuilder
+      .update(this._tableName)
+      .set({
+        ban: true,
+        update_user_id: updateId,
+        update_time: d,
+      })
+      .where(this._tableName + '.id = :id', { id })
+      .returning(this._schema)
+      .updateEntity(true)
+      .execute();
 
-        const result = await queryBuilder
-            .update<InhabitantEntity>(InhabitantEntity, oldData)
-            .where(this._tableName + '.id = :id', { id })
-            .returning(this._schema)
-            .updateEntity(true)
-            .execute();
-
-        const model = result.raw[0] as InhabitantEntity;
-        return {
-            id: model.id,
-            name: model.name,
-            age: model.age,
-            occupation: model.occupation,
-        };
-    }
-    async delete(id: string, updateId: string): Promise<InhabitantDto> {
-        const oldData = await this.inhabitantDao.findOne({
-            where: {
-                id: id,
-            },
-        });
-
-        oldData.ban = true;
-        oldData.update_user_id = updateId;
-
-        const queryBuilder = this.dataSource
-            .getRepository(InhabitantEntity)
-            .createQueryBuilder(this._tableName);
-
-        const result = await queryBuilder
-            .update<InhabitantEntity>(InhabitantEntity, oldData)
-            .where(this._tableName + '.id = :id', { id })
-            .returning(this._schema)
-            .updateEntity(true)
-            .execute();
-
-        const model = result.raw[0] as InhabitantEntity;
-        return {
-            id: model.id,
-            name: model.name,
-            age: model.age,
-            occupation: model.occupation,
-        };
-    }
+    const model = result.raw[0] as InhabitantEntity;
+    return {
+      id: model.id,
+      name: model.name,
+      age: model.age,
+      occupation: model.occupation,
+    };
+  }
 }

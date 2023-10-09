@@ -2,8 +2,6 @@ import {
   MigrationInterface,
   QueryRunner,
   Table,
-  TableColumn,
-  TableForeignKey,
 } from 'typeorm';
 
 export class INHABITANT1695957121944 implements MigrationInterface {
